@@ -20,10 +20,13 @@ class NgramLM:
         """
         ngram: list of string [w_{i-n+1},...,w_{i}]
         """
+        assert len(ngram) == self.order, "Length of ngram is not the same as the one you specified during the initialization!"
+
         word, context = self._decomposeNgram(ngram)
         self._root.addNgramCount(word, context, count)
 
     def addNgramProb(self, ngram, prob = 0.0):
+        assert len(ngram) == self.order, "Length of ngram is not the same as the one you specified during the initialization!"
         word, context = self._decomposeNgram(ngram)
         self._root.addNgramProb(word, context, count)
 

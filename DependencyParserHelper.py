@@ -44,8 +44,7 @@ def stringToDependencyTreeWeakRef(string):
             pos2 = None
         pos = info[4].split(":")[0]
         isContent = info[5]=="1"
-        nodeList[id].eIndex = id # because eIndex and data["id"] is identica we can remove either, but this might lead to runtime error so for now I keep both of them
-        nodeList[id].data = {"id":id, "dep_id":dependency_id, "surface":surface, "dict_form": dict_form, "pronunciation": pronunciation, "isContent":isContent, "pos":pos, "pos2":pos2}
+        nodeList[id].data = {"id": id, "dep_id": dependency_id, "surface": surface, "dict_form": dict_form, "pronunciation": pronunciation, "isContent": isContent, "pos": pos, "pos2": pos2}
         if dependency_id >= 0:
             nodeList[id].parent = nodeList[dependency_id]
             nodeList[dependency_id].addChild(nodeList[id])
