@@ -30,9 +30,15 @@ class NgramLM:
         word, context = self._decomposeNgram(ngram)
         self._root.addNgramProb(word, context, count)
 
-    def saveNgramInfo(self, filename, countOnly = False):
-        with open(filename, "w") as fstream:
-            self._saveNgramInfo(fstream, self._root, [], countOnly)
+    def saveNgramInfo(self, filename = None, fstream = None, countOnly = False):
+        if not (filename is None ^ fstream is None):
+            raise ValueError("One of filename and fstream should be set")
+
+        if filename is not None:
+            with open(filename, "w") as fstream:
+                self._saveNgramInfo(fstream, self._root, [], countOnly)
+        else:
+                self._saveNgramInfo(fstream, self._root, [], countOnly)
 
     def _saveNgramInfo(self, fstream, node, context, countOnly):
         if len(node.children) == 0: # Reached highest order node?
