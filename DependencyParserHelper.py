@@ -7,12 +7,10 @@ def readDependencyFile(filename):
     dep=""
     with open(filename,"r") as f:
         for line in f:
-            if line.startswith("#"):
+            if line.startswith("\n"):
                 if dep!="":
                     yield dep
                     dep=""
-                continue
-            if line.startswith("\n"):
                 continue
             dep += line
         if dep!="":
@@ -30,21 +28,14 @@ def stringToDependencyTreeWeakRef(string):
     strlen = len(infos)
     nodeList = [DependencyTreeNode() for i in range(0,strlen)]
     for info in infos: 
-        id = int(info[0])
-        dependency_id = int(info[1])
-        surface = info[2] 
-        dict_form = info[3].split("/")[0]
-        if "/" in info[3]:
-            pronunciation = info[3].split("/")[1]
-        else:
-            pronunciation = None
-        if ":" in info[4]:
-            pos2 = info[4].split(":")[1] # pos in detail
-        else:
-            pos2 = None
-        pos = info[4].split(":")[0]
-        isContent = info[5]=="1"
-        nodeList[id].data = {"id": id, "dep_id": dependency_id, "surface": surface, "dict_form": dict_form, "pronunciation": pronunciation, "isContent": isContent, "pos": pos, "pos2": pos2}
+        id = int(info[0]) - 1
+        surface = info[1] 
+        dict_form = info[2]
+        pos = info[3]
+        pos2 = info[4]
+        dependency_id = int(info[6]) - 1
+        depLabel = info[7]
+        nodeList[id].data = {"id": id, "dep_id": dependency_id, "surface": surface, "dict_form": dict_form, "pos": pos, "pos2": pos2, "depLabel": depLabel}
         if dependency_id >= 0:
             nodeList[id].parent = nodeList[dependency_id]
             nodeList[dependency_id].addChild(nodeList[id])

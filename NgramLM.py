@@ -28,10 +28,10 @@ class NgramLM:
     def addNgramProb(self, ngram, prob = 0.0):
         assert len(ngram) == self.order, "Length of ngram is not the same as the one you specified during the initialization!"
         word, context = self._decomposeNgram(ngram)
-        self._root.addNgramProb(word, context, count)
+        self._root.addNgramProb(word, context, prob)
 
     def saveNgramInfo(self, filename = None, fstream = None, countOnly = False):
-        if not (filename is None ^ fstream is None):
+        if not ((filename is None) ^ (fstream is None)):
             raise ValueError("One of filename and fstream should be set")
 
         if filename is not None:
@@ -54,6 +54,28 @@ class NgramLM:
                 self._saveNgramInfo(fstream, node.children[word], context, countOnly)
                 context.pop(0)
 
+    def writeMessage(self, ngramEntries):
+        """
+        Write ngram infos to ngramEntries
+        """
+        self._writeMessage(ngramEntries,  self._root, [])
+        
+    def _writeMessage(self, ngramEntries, node, context):
+        if len(node.children) == 0: # Reached highest order node?
+            for word in node.prob.iterkeys():
+                ngram = context + [word]
+                ngramEntry = ngramEntries.add()
+                ngramEntry.prob = node.prob[word]
+                ngramEntry.count = node.count[word]
+                for word in ngram:
+                    ngramEntry.ngram.append(word)
+        else:
+            for word in node.children.iterkeys():
+                context.insert(0, word)
+                self._writeMessage(ngramEntries, node.children[word], context)
+                context.pop(0)
+
+
     def mlEstimate(self):
         self._root.mlEstimate()
 
@@ -75,6 +97,8 @@ class NgramLM:
             if curNode.prob.has_key(word):
                 prob = curNode.prob[word]
                 bow = 0.0
+            else:
+                return 1e-9
             if len(context) == 0:
                 break
             if not curNode.children.has_key(context[0]):

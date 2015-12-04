@@ -29,7 +29,7 @@ class NgramLMNode:
         """        
         self.prob[word] += prob
         if len(context) > 0:
-            self.children[context[0]].addNgramProb(word, context[1:], count)
+            self.children[context[0]].addNgramProb(word, context[1:], prob)
 
 
     def mlEstimate(self):
