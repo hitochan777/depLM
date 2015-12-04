@@ -4,12 +4,12 @@ Implementations of Dependency Tree Language Models with smoothing methods
 
 # Requirements
 
-- invoke
--
+- [protocol buffer for Python](https://developers.google.com/protocol-buffers/)
 
 # Installation
 
 ```
-h
+pip install -r requirements.txt
+inv proto
 ```
 
