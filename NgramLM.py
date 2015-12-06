@@ -98,7 +98,7 @@ class NgramLM:
                 prob = curNode.prob[word]
                 bow = 0.0
             else:
-                return 1e-9
+                return -10 # any negative small number suffices
             if len(context) == 0:
                 break
             if not curNode.children.has_key(context[0]):

@@ -1,6 +1,5 @@
 import sys
 
-from DependencyTreeNode import DependencyTreeNode
 import DependencyParserHelper as dph
 from NgramLM import NgramLM
 import depLM_pb2
@@ -77,7 +76,7 @@ class DependencyLM(object):
     def countFreq(self, node):
         if node.parent is None:
             self.probHead.addNgramCount([self.countkey(node)])
-        left, right = self._partition(node.children, node.data["id"])
+        left, right = node.partitionChildren()
 
         if len(left) > 0:
             self.probLeft.addNgramCount(["___none", self.countkey(left[0].parent)+"___head", self.countkey(left[0])])
@@ -90,18 +89,3 @@ class DependencyLM(object):
             self.probRight.addNgramCount([self.countkey(right[index-1]), self.countkey(right[index].parent)+"___head", self.countkey(right[index])])
         for child in node.children:
             self.countFreq(child)
-
-    def _partition(self, list, pivot):
-        left = [] # items smaller than pivot
-        right = [] # items bigger than pivot
-        for item in list:
-            if item < pivot:
-                left.append(item)
-            elif item > pivot:
-                right.append(item)
-            else:
-                raise ValueError("item and pivot cannot have the same value because they are node ID")
-        sorted(left, key=lambda x: x.data["id"], reverse=True)
-        # By default reverse is False, but this is just for emphasizing right is not reversed as opposed to left
-        sorted(right, key=lambda x: x.data["id"], reverse=False) 
-        return left, right
