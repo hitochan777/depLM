@@ -59,19 +59,27 @@ class DependencyLM(object):
             self.probRight.writeMessage(lmpb.probRight.ngramEntries)
             model.write(lmpb.SerializeToString())
              
-    def readModelFromProtocolBuffer(self, filename):
-        with open(filename, "rb") as model:
-            lmpb = depLM_pb2.depLM()
-            lmpb.ParseFromString(model.read())
-            for ngramEntry in lmpb.probHead.ngramEntries:
-                self.probHead.addNgramProb(ngramEntry.ngram, ngramEntry.prob)
-                self.probHead.addNgramCount(ngramEntry.ngram, ngramEntry.count)
-            for ngramEntry in lmpb.probLeft.ngramEntries:
-                self.probLeft.addNgramProb(ngramEntry.ngram, ngramEntry.prob)
-                self.probLeft.addNgramCount(ngramEntry.ngram, ngramEntry.count)
-            for ngramEntry in lmpb.probRight.ngramEntries:
-                self.probRight.addNgramProb(ngramEntry.ngram, ngramEntry.prob)
-                self.probRight.addNgramCount(ngramEntry.ngram, ngramEntry.count)
+    def readModelFromProtocolBuffer(self, file):
+        isString = False
+        if isinstance(file, basestring):
+            model = open(file, "rb")
+            isString = True
+        else:
+            model = file
+        
+        lmpb = depLM_pb2.depLM()
+        lmpb.ParseFromString(model.read())
+        for ngramEntry in lmpb.probHead.ngramEntries:
+            self.probHead.addNgramProb(ngramEntry.ngram, ngramEntry.prob)
+            self.probHead.addNgramCount(ngramEntry.ngram, ngramEntry.count)
+        for ngramEntry in lmpb.probLeft.ngramEntries:
+            self.probLeft.addNgramProb(ngramEntry.ngram, ngramEntry.prob)
+            self.probLeft.addNgramCount(ngramEntry.ngram, ngramEntry.count)
+        for ngramEntry in lmpb.probRight.ngramEntries:
+            self.probRight.addNgramProb(ngramEntry.ngram, ngramEntry.prob)
+            self.probRight.addNgramCount(ngramEntry.ngram, ngramEntry.count)
+        if isString: # If filestream is opened in this function, close fstream
+            mode.close()
 
     def countFreq(self, node):
         if node.parent is None:
