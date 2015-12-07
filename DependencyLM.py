@@ -2,7 +2,7 @@ import sys
 
 import DependencyParserHelper as dph
 from NgramLM import NgramLM
-import depLM_pb2
+# import depLM_pb2
 
 # TODO: Add support for arbitrary n-gram LM. This class currently support only trigram
 class DependencyLM(object):
@@ -42,7 +42,7 @@ class DependencyLM(object):
         self.saveModelAsProtocolBuffer(modelFile)
         print "Finished writing model information to %s" % (modelFile, )
 
-    def saveModel(self, filename):
+    def saveModelAsPlainText(self, filename):
         with open(filename, "w") as model:
            model.write("[probHead]\n")
            self.probHead.saveNgramInfo(fstream=model)
@@ -50,6 +50,43 @@ class DependencyLM(object):
            self.probLeft.saveNgramInfo(fstream=model)
            model.write("[probRight]\n")
            self.probRight.saveNgramInfo(fstream=model)
+
+    def readModelFromPlainText(self, file):
+        isString = False
+        if isinstance(file, basestring):
+            model = open(file, "r")
+            isString = True
+        else:
+            model = file
+        
+        for line in model:
+            line = line.strip()
+            if line in ["[probHead]", "[probLeft]", "[probRight]"]:
+                state = line
+                continue
+
+            if line == "":
+                continue
+
+            ngram, count, prob = line.split("\t")
+            ngram = ngram.split(" ")
+            count = int(count)
+            prob = float(prob)
+            if state == "[probHead]":
+                self.probHead.addNgramProb(ngram, prob)
+                self.probHead.addNgramCount(ngram, count)
+
+            elif state == "[probLeft]":
+                self.probLeft.addNgramProb(ngram, prob)
+                self.probLeft.addNgramCount(ngram, count)
+            
+            elif line == "probRight":
+                self.probRight.addNgramProb(ngram, prob)
+                self.probRight.addNgramCount(ngram, count)
+
+        if isString: # If filestream is opened in this function, close fstream
+            model.close()
+
 
     def saveModelAsProtocolBuffer(self, filename):
         with open(filename, "wb") as model:
