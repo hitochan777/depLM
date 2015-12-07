@@ -79,7 +79,7 @@ class DependencyLM(object):
             self.probRight.addNgramProb(ngramEntry.ngram, ngramEntry.prob)
             self.probRight.addNgramCount(ngramEntry.ngram, ngramEntry.count)
         if isString: # If filestream is opened in this function, close fstream
-            mode.close()
+            model.close()
 
     def countFreq(self, node):
         if node.parent is None:
