@@ -39,7 +39,7 @@ class DependencyLM(object):
             print # Without this, when there are less than #progress trees, there will be an empty line, which is ugly in my opinion...
         print "Model training has successfully finished!"
         print "Writing model infomation to %s" % (modelFile, )
-        self.saveModelAsProtocolBuffer(modelFile)
+        self.saveModelAsPlainText(modelFile)
         print "Finished writing model information to %s" % (modelFile, )
 
     def saveModelAsPlainText(self, filename):
