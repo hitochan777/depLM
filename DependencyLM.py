@@ -26,6 +26,8 @@ class DependencyLM(object):
             if cnt % progress == 0:
                 sys.stdout.write(".")
             tree = dph.stringToDependencyTreeWeakRef(depString)
+            if tree is None:
+                continue
             self.countFreq(tree)
         if self.smoothing == "ml":
             # Apppy maximum likelihood estimation to get probability from counts

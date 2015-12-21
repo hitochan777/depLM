@@ -1,4 +1,5 @@
 from invoke import run, task
+from DependencyLM import *
 
 @task
 def test():
@@ -11,3 +12,8 @@ def clean():
 @task
 def proto():
     run("protoc -I=. --python_out=. depLM.proto")
+
+@task
+def train(filename, modelFile):
+    lm = DependencyLM()
+    lm.train(filename, modelFile)
